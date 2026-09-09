@@ -34,7 +34,7 @@ app.add_middleware(
 vision_engine = NativeVisionEngine(pixels_per_mm=3.20)
 
 # Local Edge Storage directory (SSD persistence)
-STORAGE_DIR = Path("./edge_storage")
+STORAGE_DIR = Path("/tmp/edge_storage")
 STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 BATCHES_FILE = STORAGE_DIR / "batches.json"
 
