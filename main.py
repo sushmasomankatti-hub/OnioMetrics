@@ -175,7 +175,7 @@ def sync_to_cloud():
 
 
 # Mount static frontend files for standalone edge kiosk
-frontend_dir = Path(__file__).parent.parent
+frontend_dir = Path(__file__).parent
 if (frontend_dir / "index.html").exists():
     app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="static")
 
