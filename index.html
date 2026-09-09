@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OnioMetrics — Smart Onion Assessment & Grading Platform</title>
+  <link rel="stylesheet" href="css/industrial-theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="theme-industrial">
+  <!-- Top Industrial Status Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <circle cx="12" cy="14" r="7" opacity="0.3"/>
+            <path d="M12 2C10.5 4.5 7 8 7 14a5 5 0 0 0 10 0c0-6-3.5-9.5-5-12z" />
+            <path d="M12 2v6" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">ONIOMETRICS <span class="badge-edge">EDGE AI</span></span>
+          <span class="brand-sub">Smart Onion Quality Assessment & Grading System</span>
+        </div>
+      </div>
+      
+      <div class="procurement-station">
+        <span class="label">STATION:</span>
+        <select id="stationSelect" class="station-dropdown">
+          <option value="lasalgaon-01">Lasalgaon APMC — Line 01 (Export)</option>
+          <option value="pimpalgaon-02">Pimpalgaon Hub — Sizing Line B</option>
+          <option value="nashik-terminal">Nashik Cold Terminal — Intake Hub</option>
+          <option value="solapur-sorting">Solapur Mandi — Packhouse 3</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <!-- Active Batch Pill -->
+      <div class="active-batch-pill" id="activeBatchPill">
+        <span class="pulse-indicator"></span>
+        <span class="batch-title">BATCH:</span>
+        <span class="batch-id-val" id="headerBatchId">BATCH-2026-0908</span>
+        <span class="batch-variety-tag" id="headerVarietyTag">Red Nasik</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Offline / Sync Status Indicator -->
+      <div class="status-indicator-box" id="offlineStatusBox" title="Edge device operating 100% offline. Local storage active.">
+        <div class="status-pill offline" id="networkStatusPill">
+          <span class="dot"></span>
+          <span class="text" id="networkStatusText">EDGE OFFLINE</span>
+        </div>
+        <div class="storage-counter" id="storageCounter">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2"/></svg>
+          <span id="pendingSyncCount">0</span> pending
+        </div>
+        <button class="btn-sync-cloud" id="btnSyncCloud" title="Sync stored records to cloud database">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/>
+            <polyline points="12 11 12 16 15 13"/>
+          </svg>
+          <span>Sync</span>
+        </button>
+      </div>
+
+      <!-- Quick Settings / Calibration Icon -->
+      <button class="icon-button" id="btnOpenCalibration" title="Camera Calibration & Settings">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Industrial High-Contrast Navigation Bar -->
+  <nav class="app-nav">
+    <div class="nav-links">
+      <button class="nav-tab active" data-page="live-monitor">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+        <span>1. Live Monitor</span>
+      </button>
+      <button class="nav-tab" data-page="batch-reports">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <span>2. Batch Reports</span>
+      </button>
+      <button class="nav-tab" data-page="grading-criteria">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+        <span>3. Grading Criteria</span>
+      </button>
+      <button class="nav-tab" data-page="analytics">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>4. Quality Analytics</span>
+      </button>
+      <button class="nav-tab" data-page="calibration">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        <span>5. Edge Calibration</span>
+      </button>
+    </div>
+
+    <!-- Quick Stats Ticker Strip -->
+    <div class="nav-quick-ticker" id="quickTicker">
+      <div class="ticker-item"><span class="k">SPEED:</span> <span class="v" id="tickerSpeed">42 onions/min</span></div>
+      <div class="ticker-item"><span class="k">LINE EFFICIENCY:</span> <span class="v" id="tickerEff">99.4%</span></div>
+      <div class="ticker-item"><span class="k">MOLD VETOES:</span> <span class="v danger" id="tickerMoldVetoes">0</span></div>
+    </div>
+  </nav>
+
+  <!-- Main Multi-Page Container -->
+  <main class="app-main-content">
+
+    <!-- ============================================================ -->
+    <!-- PAGE 1: LIVE MONITOR (Single-Unit & Conveyor Batch Modes)    -->
+    <!-- ============================================================ -->
+    <section id="page-live-monitor" class="view-page active">
+      
+      <!-- Top Control Toolbar -->
+      <div class="monitor-control-bar">
+        <div class="mode-switch-group">
+          <span class="mode-label">CAMERA MODE:</span>
+          <div class="toggle-pill-group">
+            <button class="btn-toggle-pill active" id="btnModeSingle" data-mode="single">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="12" cy="12" r="7"/></svg>
+              <span>Single-Unit Mode</span>
+            </button>
+            <button class="btn-toggle-pill" id="btnModeBatch" data-mode="batch">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 12h.01M12 12h.01M18 12h.01"/></svg>
+              <span>Batch / Conveyor Mode</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="feed-source-group">
+          <span class="mode-label">VIDEO SOURCE:</span>
+          <select id="videoSourceSelect" class="source-dropdown">
+            <option value="simulator" selected>⚡ High-FPS Conveyor Simulator (Demo)</option>
+            <option value="webcam">📷 Device Webcam / USB Industrial Cam</option>
+            <option value="upload">📁 Static Image / File Feed</option>
+            <option value="presets">🧪 Curated Presets (Grade A / B / C / Mold)</option>
+          </select>
+        </div>
+
+        <div class="batch-action-buttons">
+          <button class="btn btn-outline" id="btnNewBatch">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>New Batch</span>
+          </button>
+          <button class="btn btn-primary" id="btnToggleConveyor">
+            <span id="conveyorBtnIcon">▶</span>
+            <span id="conveyorBtnText">Start Conveyor</span>
+          </button>
+          <button class="btn btn-warning" id="btnEndBatch">
+            <span>⏹ End Batch & Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Dashboard Grid Layout -->
+      <div class="monitor-grid">
+        
+        <!-- Left Column: Video Viewport & Overlays -->
+        <div class="video-viewport-panel">
+          <div class="viewport-header">
+            <div class="stream-info">
+              <span class="live-badge" id="liveBadge">LIVE STREAM</span>
+              <span class="fps-indicator" id="streamFps">60 FPS</span>
+              <span class="res-indicator">1920×1080 Calibrated</span>
+            </div>
+            
+            <div class="overlay-toggles">
+              <label class="toggle-checkbox" title="Show Bounding Box and Caliber Overlay">
+                <input type="checkbox" id="chkShowBBox" checked>
+                <span class="chk-label">Bounding Box</span>
+              </label>
+              <label class="toggle-checkbox" title="Show Measured Diameter (mm) Caliper Lines">
+                <input type="checkbox" id="chkShowCalipers" checked>
+                <span class="chk-label">Calipers (mm)</span>
+              </label>
+              <label class="toggle-checkbox" title="Highlight Aspergillus Spore Colonies">
+                <input type="checkbox" id="chkShowSporeHeatmap" checked>
+                <span class="chk-label">Fungal Heatmap</span>
+              </label>
+              <label class="toggle-checkbox" title="Show Object Centroid Tracking IDs">
+                <input type="checkbox" id="chkShowTracking" checked>
+                <span class="chk-label">Tracker IDs</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Video Display Container -->
+          <div class="canvas-stage-wrapper" id="canvasStageWrapper">
+            <!-- Hidden real video element for webcam -->
+            <video id="webcamElement" playsinline autoplay muted style="display:none;"></video>
+            
+            <!-- Main Rendering Canvas -->
+            <canvas id="visionCanvas" width="960" height="540"></canvas>
+            
+            <!-- Conveyor Line Guideline Overlay -->
+            <div class="conveyor-guideline" id="conveyorGuideline" style="display:none;">
+              <span class="guide-label">ASSESSMENT FOCAL ZONE</span>
+            </div>
+
+            <!-- Single Unit Crosshair HUD Overlay -->
+            <div class="single-hud-crosshair" id="singleHudCrosshair">
+              <div class="ch-circle"></div>
+              <div class="ch-line-h"></div>
+              <div class="ch-line-v"></div>
+              <div class="ch-caliper-bracket top-bracket"></div>
+              <div class="ch-caliper-bracket bottom-bracket"></div>
+              <div class="ch-prompt">ALIGN SINGLE ONION WITHIN TARGET RING</div>
+            </div>
+
+            <!-- Urgent Food Safety Biohazard Banner -->
+            <div class="food-safety-banner" id="foodSafetyBanner" style="display:none;">
+              <div class="banner-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                  <path d="M12 2L1 21h22L12 2zm0 4l7.5 13h-15L12 6zm-1 4v4h2v-4h-2zm0 6v2h2v-2h-2z"/>
+                </svg>
+              </div>
+              <div class="banner-text">
+                <div class="banner-title">CRITICAL FOOD SAFETY ALERT: ASPERGILLUS DETECTED</div>
+                <div class="banner-desc" id="foodSafetyBannerDesc">Black Mold (Aspergillus niger) colony flagged. Automatic Rejection veto enforced. Specimen quarantined.</div>
+              </div>
+            </div>
+
+            <!-- File Upload Drop Zone Overlay (when in upload mode) -->
+            <div class="upload-dropzone" id="uploadDropzone" style="display:none;">
+              <input type="file" id="fileInput" accept="image/*" style="display:none;">
+              <div class="drop-content" id="dropContentArea">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <h3>Drag & Drop Onion Image Here</h3>
+                <p>or click to select high-resolution capture from camera rig</p>
+                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Viewport Bottom Controls -->
+          <div class="viewport-footer">
+            <div class="single-controls" id="singleControls">
+              <button class="btn btn-primary btn-large" id="btnCaptureAssess">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+                <span>CAPTURE & ASSESS</span>
+              </button>
+              <label class="toggle-checkbox auto-trigger-toggle">
+                <input type="checkbox" id="chkAutoTrigger" checked>
+                <span class="chk-label">Auto-Trigger on Stable Detection</span>
+              </label>
+              <div class="preset-pills" id="presetPills">
+                <span class="preset-label">TEST PRESETS:</span>
+                <button class="pill-preset" data-preset="gradeA">🟢 Grade A Export (68mm)</button>
+                <button class="pill-preset" data-preset="gradeB">🟡 Grade B Medium (54mm)</button>
+                <button class="pill-preset" data-preset="gradeC">🟠 Grade C Small (42mm)</button>
+                <button class="pill-preset" data-preset="smallBaby">🟠 Grade C Baby (28mm Clean)</button>
+                <button class="pill-preset" data-preset="rejectRot">🔴 Reject: Rotten / Decay</button>
+                <button class="pill-preset" data-preset="rejectSprout">🌱 Reject: Sprouted Shoot</button>
+                <button class="pill-preset" data-preset="rejectMold">⚠️ Reject: Aspergillus Mold</button>
+                <button class="pill-preset" data-preset="rejectDefect">🩹 Reject: Surface Damage (&gt;18%)</button>
+              </div>
+            </div>
+
+            <div class="conveyor-controls" id="conveyorControls" style="display:none;">
+              <div class="conveyor-slider-group">
+                <span class="label">Belt Speed:</span>
+                <input type="range" id="rngBeltSpeed" min="1" max="5" value="2">
+                <span class="val" id="valBeltSpeed">Normal (45/min)</span>
+              </div>
+              <div class="conveyor-slider-group">
+                <span class="label">Defect Rate Injection:</span>
+                <input type="range" id="rngDefectRate" min="0" max="60" value="25">
+                <span class="val" id="valDefectRate">25% Mixed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Running Tally & Live Specimen Assessment HUD -->
+        <div class="telemetry-panel">
+          
+          <!-- Running Tally Cards (Conveyor / Session Totals) -->
+          <div class="tally-card-container">
+            <div class="tally-card total">
+              <div class="tally-label">TOTAL SCANNED</div>
+              <div class="tally-value" id="tallyTotal">0</div>
+              <div class="tally-sub" id="tallyWeight">0.0 kg Total</div>
+            </div>
+
+            <div class="tally-card grade-a">
+              <div class="tally-header">
+                <span class="badge-grade grade-a">GRADE A</span>
+                <span class="tally-pct" id="tallyGradeAPct">0.0%</span>
+              </div>
+              <div class="tally-value" id="tallyGradeACount">0</div>
+              <div class="tally-sub">&gt;60mm (Export Super)</div>
+            </div>
+
+            <div class="tally-card grade-b">
+              <div class="tally-header">
+                <span class="badge-grade grade-b">GRADE B</span>
+                <span class="tally-pct" id="tallyGradeBPct">0.0%</span>
+              </div>
+              <div class="tally-value" id="tallyGradeBCount">0</div>
+              <div class="tally-sub">50–60mm (Standard)</div>
+            </div>
+
+            <div class="tally-card grade-c">
+              <div class="tally-header">
+                <span class="badge-grade grade-c">GRADE C</span>
+                <span class="tally-pct" id="tallyGradeCPct">0.0%</span>
+              </div>
+              <div class="tally-value" id="tallyGradeCCount">0</div>
+              <div class="tally-sub">&le;50mm (Regional/Baby)</div>
+            </div>
+
+            <div class="tally-card reject">
+              <div class="tally-header">
+                <span class="badge-grade grade-reject">REJECT</span>
+                <span class="tally-pct" id="tallyRejectPct">0.0%</span>
+              </div>
+              <div class="tally-value" id="tallyRejectCount">0</div>
+              <div class="tally-sub">Rot / Sprout / Mold / Damage</div>
+            </div>
+
+            <div class="tally-card quality">
+              <div class="tally-label">RUNNING QUALITY SCORE</div>
+              <div class="tally-value score-val" id="tallyQualityScore">--</div>
+              <div class="tally-bar">
+                <div class="tally-bar-fill" id="tallyScoreBar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instant Assessment Result Card -->
+          <div class="specimen-assessment-card" id="specimenCard">
+            <div class="specimen-header">
+              <div class="specimen-id-box">
+                <span class="lbl">SPECIMEN ID</span>
+                <span class="val" id="specimenId">--</span>
+              </div>
+              <div class="specimen-status-badge" id="specimenStatusBadge">
+                WAITING FOR CAPTURE
+              </div>
+            </div>
+
+            <!-- 7 Detection Modules Diagnostic Grid -->
+            <div class="modules-grid">
+              
+              <!-- 1. Diameter & Caliber -->
+              <div class="module-item" id="modSize">
+                <div class="mod-icon">📏</div>
+                <div class="mod-details">
+                  <div class="mod-title">Equatorial Diameter</div>
+                  <div class="mod-val" id="modDiameterVal">-- mm</div>
+                  <div class="mod-meta" id="modDiameterGrade">Threshold: A &gt; 60mm</div>
+                </div>
+              </div>
+
+              <!-- 2. Shape Classification -->
+              <div class="module-item" id="modShape">
+                <div class="mod-icon">⚪</div>
+                <div class="mod-details">
+                  <div class="mod-title">Shape Contour</div>
+                  <div class="mod-val" id="modShapeVal">--</div>
+                  <div class="mod-meta" id="modShapeRatio">Aspect Ratio: --</div>
+                </div>
+              </div>
+
+              <!-- 3. Colour Classification -->
+              <div class="module-item" id="modColour">
+                <div class="mod-icon">🎨</div>
+                <div class="mod-details">
+                  <div class="mod-title">HSV Skin Colour</div>
+                  <div class="mod-val" id="modColourVal">--</div>
+                  <div class="mod-meta" id="modColourHue">Variety Band: Red Nasik</div>
+                </div>
+              </div>
+
+              <!-- 4. Sprouting Detection -->
+              <div class="module-item" id="modSprout">
+                <div class="mod-icon">🌱</div>
+                <div class="mod-details">
+                  <div class="mod-title">Apical Sprouting</div>
+                  <div class="mod-val" id="modSproutVal">--</div>
+                  <div class="mod-meta" id="modSproutCoverage">Coverage: 0.0%</div>
+                </div>
+              </div>
+
+              <!-- 5. Rot / Decay Detection -->
+              <div class="module-item" id="modRot">
+                <div class="mod-icon">💧</div>
+                <div class="mod-details">
+                  <div class="mod-title">Rot &amp; Decay</div>
+                  <div class="mod-val" id="modRotVal">--</div>
+                  <div class="mod-meta" id="modRotArea">Soft spots / moisture: None</div>
+                </div>
+              </div>
+
+              <!-- 6. Aspergillus Species Mold Detector -->
+              <div class="module-item critical-hazard" id="modAspergillus">
+                <div class="mod-icon">☣️</div>
+                <div class="mod-details">
+                  <div class="mod-title">Aspergillus Fungal Scan</div>
+                  <div class="mod-val" id="modAspergillusVal">Clean</div>
+                  <div class="mod-meta" id="modAspergillusConf">Confidence: 99.1% clean</div>
+                </div>
+              </div>
+
+              <!-- 7. Surface / External Defects -->
+              <div class="module-item" id="modSurface">
+                <div class="mod-icon">🩹</div>
+                <div class="mod-details">
+                  <div class="mod-title">External Skin Defects</div>
+                  <div class="mod-val" id="modDefectVal">-- %</div>
+                  <div class="mod-meta" id="modDefectStatus">Cuts / Bruises / Cracks</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Structured JSON Output Accordion -->
+            <div class="json-output-section">
+              <div class="json-header" id="btnToggleJson">
+                <span>📋 Telemetry JSON Result</span>
+                <span class="json-toggle-arrow">▼</span>
+              </div>
+              <pre class="json-code-block" id="specimenJsonBlock">{\n  "status": "Awaiting frame analysis"\n}</pre>
+            </div>
+          </div>
+
+          <!-- Live Feed Scanned Stream Table (Last 6 scanned onions) -->
+          <div class="recent-scanned-container">
+            <div class="recent-header">
+              <span>REAL-TIME SPECIMEN QUEUE</span>
+              <span class="queue-count" id="queueCount">0 in batch</span>
+            </div>
+            <div class="recent-table-wrapper">
+              <table class="recent-table" id="recentSpecimensTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Diameter</th>
+                    <th>Grade</th>
+                    <th>Defect%</th>
+                    <th>Safety / Mold</th>
+                    <th>Final Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recentSpecimensBody">
+                  <tr class="empty-row"><td colspan="6">No specimens scanned yet. Start conveyor or click Capture.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PAGE 2: BATCH REPORTS ARCHIVE & MANDI CERTIFICATES          -->
+    <!-- ============================================================ -->
+    <section id="page-batch-reports" class="view-page">
+      <div class="page-container">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">Procurement Batch Reports &amp; Archive</h2>
+            <p class="page-subtitle">Standardized inspection records, grade yields, and export-compliant mandi certificates</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-outline" id="btnExportAllCsv">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              <span>Export CSV (All Batches)</span>
+            </button>
+            <button class="btn btn-primary" id="btnCreateNewBatchReport">
+              <span>+ Register New Lot</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="filter-toolbar">
+          <div class="search-box">
+            <input type="text" id="inputBatchSearch" placeholder="Search by Batch No, Farmer Name, Station...">
+          </div>
+          <div class="filter-selects">
+            <select id="filterVariety">
+              <option value="all">All Varieties</option>
+              <option value="Red Nasik">Red Nasik</option>
+              <option value="White Onion">White Onion</option>
+              <option value="Yellow Spanish">Yellow Spanish</option>
+            </select>
+            <select id="filterGradeFilter">
+              <option value="all">All Grades</option>
+              <option value="high-a">&gt;70% Grade A</option>
+              <option value="has-rejects">With Mold/Rejections</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Historical Batches Table -->
+        <div class="data-table-wrapper">
+          <table class="industrial-table" id="batchHistoryTable">
+            <thead>
+              <tr>
+                <th>Batch No.</th>
+                <th>Date &amp; Time</th>
+                <th>Supplier / Farmer</th>
+                <th>Variety</th>
+                <th>Total Count</th>
+                <th>Grade A (%)</th>
+                <th>Grade B (%)</th>
+                <th>Grade C (%)</th>
+                <th>Reject (%)</th>
+                <th>Quality Score</th>
+                <th>Safety Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="batchHistoryBody">
+              <!-- Dynamically populated from IndexedDB -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PAGE 3: GRADING CRITERIA REFERENCE                          -->
+    <!-- ============================================================ -->
+    <section id="page-grading-criteria" class="view-page">
+      <div class="page-container">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">Standardized Grading Criteria &amp; Thresholds</h2>
+            <p class="page-subtitle">Strict diameter-based physical caliper standards and food-safety pathology definitions</p>
+          </div>
+        </div>
+
+        <!-- Critical Aspergillus Food Safety Callout -->
+        <div class="criteria-hazard-box">
+          <div class="hazard-icon">☣️</div>
+          <div class="hazard-body">
+            <h3>CRITICAL MANDATORY NOTICE: ASPERGILLUS SPECIES ZERO TOLERANCE</h3>
+            <p>
+              *Aspergillus niger* (black mold) and *Aspergillus flavus* (yellow mold) produce destructive post-harvest black powdery spore masses and potential carcinogenic mycotoxins (ochratoxins &amp; aflatoxins).
+            </p>
+            <div class="hazard-rules">
+              <div class="rule-chip danger"><strong>Rule 1:</strong> Automatic REJECT override on any confirmed conidial spore mass (&ge;0.8% area).</div>
+              <div class="rule-chip danger"><strong>Rule 2:</strong> Veto applies regardless of bulb diameter (even a 75mm Grade A onion is rejected).</div>
+              <div class="rule-chip danger"><strong>Rule 3:</strong> Segregated immediately from lot to prevent conveyor cross-contamination.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Standard Grade Definitions Table -->
+        <div class="criteria-card">
+          <h3 class="section-title">Core Diameter-Based Caliper Standards</h3>
+          <table class="criteria-table">
+            <thead>
+              <tr>
+                <th>Grade</th>
+                <th>Category</th>
+                <th>Diameter Range</th>
+                <th>Target Market / Commercial Use</th>
+                <th>Max Surface Defect</th>
+                <th>Sprouting Limit</th>
+                <th>Target Quality</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-grade-a">
+                <td><span class="badge-grade grade-a">Grade A</span></td>
+                <td><strong>Large / Super</strong></td>
+                <td><strong class="highlight-diameter">&gt; 60.0 mm</strong></td>
+                <td>Export markets (Gulf, Europe), premium supermarket chains</td>
+                <td>&le; 5.0% area</td>
+                <td>0.0% (Zero tolerance)</td>
+                <td>85 – 100</td>
+              </tr>
+              <tr class="row-grade-b">
+                <td><span class="badge-grade grade-b">Grade B</span></td>
+                <td><strong>Medium</strong></td>
+                <td><strong class="highlight-diameter">50.0 – 60.0 mm</strong></td>
+                <td>Standard household consumption, general mandi trade</td>
+                <td>&le; 12.0% area</td>
+                <td>&le; 2.0% shoot</td>
+                <td>65 – 84</td>
+              </tr>
+              <tr class="row-grade-c">
+                <td><span class="badge-grade grade-c">Grade C</span></td>
+                <td><strong>Small / Baby</strong></td>
+                <td><strong class="highlight-diameter">&le; 50.0 mm</strong></td>
+                <td>Regional culinary use (sambar, pickling), select export niches, baby/mini</td>
+                <td>&le; 18.0% area</td>
+                <td>0.0% (Zero tolerance)</td>
+                <td>50 – 64</td>
+              </tr>
+              <tr class="row-reject">
+                <td><span class="badge-grade grade-reject">Reject</span></td>
+                <td><strong>Defective (Defect-Driven)</strong></td>
+                <td><strong class="highlight-diameter" style="color:#f87171;">Any Caliber</strong></td>
+                <td>Cull discard, biohazard segregation, industrial processing</td>
+                <td>&gt; 18.0% or soft rot</td>
+                <td>Sprouted / Mold / Rot</td>
+                <td>&lt; 50</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Visual Caliper Size Gauge Simulator -->
+        <div class="criteria-card">
+          <h3 class="section-title">Interactive Caliper Gauge &amp; Grade Demonstrator</h3>
+          <div class="interactive-gauge-layout">
+            <div class="gauge-controls">
+              <label>Simulate Diameter: <span id="gaugeDiameterVal" class="gauge-display-val">64.5 mm</span></label>
+              <input type="range" id="gaugeSlider" min="20" max="95" value="64" step="0.5">
+              <div class="gauge-marks">
+                <span>20mm (C Baby)</span>
+                <span>35mm (C)</span>
+                <span>50mm (C/B)</span>
+                <span>60mm (B/A)</span>
+                <span>95mm</span>
+              </div>
+              <div class="gauge-defect-sim-box" style="margin-top: 14px; padding: 12px; background: #090d16; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); margin-bottom: 8px;">SIMULATE DEFECT REJECTION (DIAMETER INDEPENDENT):</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8rem;">
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="chkSimRot"> 💧 Rotten / Soft Decay</label>
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="chkSimSprout"> 🌱 Vegetative Sprout</label>
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="chkSimMold"> ☣️ Aspergillus Mold</label>
+                  <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" id="chkSimDamage"> 🩹 Surface Cuts (&gt;18%)</label>
+                </div>
+              </div>
+            </div>
+            <div class="gauge-visual-box">
+              <div class="simulated-onion-circle" id="gaugeCircle">
+                <div class="onion-core"></div>
+                <div class="caliper-bar horizontal-caliper">
+                  <span id="gaugeCaliperText">64.5 mm</span>
+                </div>
+              </div>
+              <div class="gauge-grade-result">
+                <span class="res-lbl">CLASSIFICATION:</span>
+                <span class="res-badge" id="gaugeResultBadge">Grade A (Large / Super)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7 Vision AI Sub-Modules Reference Grid -->
+        <div class="criteria-card">
+          <h3 class="section-title">7 AI Vision Modules — Technical Methodology</h3>
+          <div class="tech-modules-grid">
+            <div class="tech-mod-card">
+              <h4>1. Size Measurement</h4>
+              <p>Sub-millimeter equatorial caliper measurement derived from Euclidean contour width calibrated via optical px-to-mm ratio ($K_{cal}$).</p>
+            </div>
+            <div class="tech-mod-card">
+              <h4>2. Shape Classification</h4>
+              <p>Evaluates polar aspect ratio ($H/W$) and contour circularity metric ($\frac{4\pi \cdot \text{Area}}{\text{Perimeter}^2}$). Classifies into Round, Oval, or Irregular.</p>
+            </div>
+            <div class="tech-mod-card">
+              <h4>3. HSV Colour Classification</h4>
+              <p>Performs 3D Hue-Saturation-Value histogram binning against variety baselines (Red Nasik, White, Yellow Brown) to flag Good, Faded, or Discoloured.</p>
+            </div>
+            <div class="tech-mod-card">
+              <h4>4. Sprouting Detection</h4>
+              <p>Chlorophyll green wavelength filter focused exclusively on the apical neck quadrant ($H \in [35, 85]$). Quantifies shoot emergence % and length.</p>
+            </div>
+            <div class="tech-mod-card">
+              <h4>5. Rot / Decay Detection</h4>
+              <p>Multi-spectral luminance decay ($L < 30$) and specular moisture sheen analysis identifying soft watery rot and bacterial soft rot (*Pectobacterium*).</p>
+            </div>
+            <div class="tech-mod-card">
+              <h4>6. Aspergillus Species Detector</h4>
+              <p>Deep texture and melanin spore cluster segmentation identifying *A. niger* (black powdery spots) and *A. flavus* (yellow-olive fungal mats).</p>
+            </div>
+            <div class="tech-mod-card">
+              <h4>7. Surface &amp; External Defects</h4>
+              <p>Adaptive gradient thresholding identifying mechanical knife wounds, harvesting bruises, sunscald blemishes, and dry skin cracking.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PAGE 4: ANALYTICS & TREND CHARTS                            -->
+    <!-- ============================================================ -->
+    <section id="page-analytics" class="view-page">
+      <div class="page-container">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">Procurement Quality Analytics &amp; Defect Pareto</h2>
+            <p class="page-subtitle">Longitudinal quality score trends, common defect distributions, and supplier performance</p>
+          </div>
+          <div class="analytics-timeframe">
+            <button class="btn-pill-filter active" data-timeframe="today">Today</button>
+            <button class="btn-pill-filter" data-timeframe="week">Past 7 Days</button>
+            <button class="btn-pill-filter" data-timeframe="month">This Month</button>
+          </div>
+        </div>
+
+        <!-- High-Level KPI Stat Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-title">TOTAL VOLUME ASSESSED</span>
+            <span class="kpi-val" id="kpiTotalVolume">14,820</span>
+            <span class="kpi-change positive">↑ +18.4% vs last week</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">AVG QUALITY SCORE</span>
+            <span class="kpi-val" id="kpiAvgQuality">82.4</span>
+            <span class="kpi-change positive">Healthy Lot Quality</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">EXPORT RATIO (GRADE A)</span>
+            <span class="kpi-val" id="kpiExportRatio">54.2%</span>
+            <span class="kpi-change positive">Meets Export Mandate</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">FOOD SAFETY REJECTS</span>
+            <span class="kpi-val" id="kpiMoldRejects">1.2%</span>
+            <span class="kpi-change neutral">Aspergillus Isolated</span>
+          </div>
+        </div>
+
+        <!-- Analytics Charts Grid -->
+        <div class="charts-grid">
+          
+          <!-- Chart 1: Quality Score Trend Over Time -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Quality Score Trend (Across Batches)</h3>
+              <span class="chart-legend"><span class="dot-legend green"></span> Quality Score %</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chartTrendQuality" width="500" height="260"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Grade Distribution Donut -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Aggregate Grade Distribution</h3>
+              <span class="chart-legend">A / B / C / Reject</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chartGradeDonut" width="500" height="260"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3: Defect Pareto Breakdown -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Most Common Defect Types (Pareto Analysis)</h3>
+              <span class="chart-legend">Incident Count</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chartDefectPareto" width="500" height="260"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 4: Supplier Performance Ranking -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Supplier Quality Performance Ranking</h3>
+              <span class="chart-legend">Avg Score / Grade A %</span>
+            </div>
+            <div class="supplier-rank-table-wrapper">
+              <table class="supplier-table">
+                <thead>
+                  <tr>
+                    <th>Supplier / Farmer</th>
+                    <th>Lots</th>
+                    <th>Grade A %</th>
+                    <th>Mold Incidents</th>
+                    <th>Rating</th>
+                  </tr>
+                </thead>
+                <tbody id="supplierRankingBody">
+                  <tr>
+                    <td><strong>Kisan Agro Cooperative</strong></td>
+                    <td>24</td>
+                    <td><span class="badge-grade grade-a">68.5%</span></td>
+                    <td>0</td>
+                    <td>⭐⭐⭐⭐⭐</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Sahyadri Farmer Producer Co.</strong></td>
+                    <td>19</td>
+                    <td><span class="badge-grade grade-a">61.2%</span></td>
+                    <td>1</td>
+                    <td>⭐⭐⭐⭐</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nashik Valley Farms</strong></td>
+                    <td>14</td>
+                    <td><span class="badge-grade grade-b">52.8%</span></td>
+                    <td>2</td>
+                    <td>⭐⭐⭐⭐</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Godavari Organic Cluster</strong></td>
+                    <td>9</td>
+                    <td><span class="badge-grade grade-b">48.3%</span></td>
+                    <td>0</td>
+                    <td>⭐⭐⭐</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PAGE 5: EDGE CALIBRATION & HARDWARE SETTINGS                -->
+    <!-- ============================================================ -->
+    <section id="page-calibration" class="view-page">
+      <div class="page-container">
+        <div class="page-header-row">
+          <div>
+            <h2 class="page-title">Edge Camera Calibration &amp; System Configuration</h2>
+            <p class="page-subtitle">Configure pixel-to-millimeter focal distance, reference markers, and offline sync parameters</p>
+          </div>
+        </div>
+
+        <div class="calibration-grid">
+          <!-- Card 1: Optical Caliper Calibration -->
+          <div class="settings-card">
+            <h3>📷 Optical Pixel-to-mm Calibration</h3>
+            <p class="desc">Define the exact magnification scale for sub-millimeter caliber grading.</p>
+            
+            <div class="setting-item">
+              <label>Calibration Method:</label>
+              <select id="calibMethodSelect">
+                <option value="fixed">Fixed Camera Mount Height (Nadir 300mm)</option>
+                <option value="coin">Standard Reference Object (25.0mm Coin in Frame)</option>
+                <option value="aruco">ArUco Optical Scale Tag (50.0mm)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Pixel-to-Millimeter Ratio ($K_{px/mm}$):</label>
+              <div class="slider-val-row">
+                <input type="range" id="rngPxPerMm" min="1.0" max="6.0" step="0.1" value="3.2">
+                <span class="num-display" id="valPxPerMm">3.20 px/mm</span>
+              </div>
+              <small>At 3.20 px/mm, a 60mm Grade A onion occupies exactly 192 pixels across its equatorial axis.</small>
+            </div>
+
+            <div class="setting-item">
+              <label>Default Onion Variety Baseline:</label>
+              <select id="cfgDefaultVariety">
+                <option value="Red Nasik">Red Nasik (Deep Purple-Red Tunic)</option>
+                <option value="White Onion">White Processing Onion</option>
+                <option value="Yellow Spanish">Yellow / Brown Spanish Hybrid</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Card 2: Defect Tolerances & Veto Rules -->
+          <div class="settings-card">
+            <h3>⚙️ Defect Tolerance &amp; Veto Rules</h3>
+            <p class="desc">Tune grading engine arbitration and downgrade sensitivity.</p>
+
+            <div class="setting-item">
+              <label>Aspergillus Veto Sensitivity:</label>
+              <select id="cfgAspergillusStrictness">
+                <option value="strict" selected>Zero-Tolerance (Spore area &ge; 0.8% = Immediate Reject)</option>
+                <option value="standard">Standard (Spore area &ge; 1.5% = Immediate Reject)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Vegetative Sprouting Threshold (Shoot Length):</label>
+              <div class="slider-val-row">
+                <input type="range" id="rngSproutLimit" min="2" max="15" value="4">
+                <span class="num-display" id="valSproutLimit">4 mm</span>
+              </div>
+              <small>Shoots exceeding this length downgrade specimen to Grade C or Reject.</small>
+            </div>
+
+            <div class="setting-item">
+              <label>Conveyor Centroid Gating Distance:</label>
+              <div class="slider-val-row">
+                <input type="range" id="rngTrackerGating" min="30" max="120" value="65">
+                <span class="num-display" id="valTrackerGating">65 px</span>
+              </div>
+              <small>Maximum frame-to-frame centroid displacement for object ID continuity.</small>
+            </div>
+          </div>
+
+          <!-- Card 3: Storage & Edge Cloud Sync -->
+          <div class="settings-card">
+            <h3>💾 Edge Storage &amp; Cloud Database Sync</h3>
+            <p class="desc">Manage local SSD IndexedDB storage and sync to central cloud database.</p>
+
+            <div class="telemetry-box">
+              <div class="t-row"><span>Local Database:</span> <strong>IndexedDB (v2.0)</strong></div>
+              <div class="t-row"><span>Stored Batches:</span> <strong id="cfgStoredBatches">12 Batches</strong></div>
+              <div class="t-row"><span>Stored Specimen Telemetry:</span> <strong id="cfgStoredSpecimens">1,420 Records</strong></div>
+              <div class="t-row"><span>Storage Consumed:</span> <strong id="cfgStorageSize">~4.8 MB (SSD)</strong></div>
+            </div>
+
+            <div class="sync-actions-row">
+              <button class="btn btn-primary" id="btnForceSyncCloud">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/><polyline points="12 11 12 16 15 13"/></svg>
+                <span>Trigger Manual Cloud Sync</span>
+              </button>
+              <button class="btn btn-outline" id="btnExportBackupJson">
+                <span>Backup Local Database (JSON)</span>
+              </button>
+              <button class="btn btn-danger" id="btnClearLocalData">
+                <span>Clear Database Cache</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- MODAL 1: BATCH INSPECTION SUMMARY & PRINTABLE CERTIFICATE    -->
+  <!-- ============================================================ -->
+  <div class="modal-backdrop" id="modalBatchSummary" style="display: none;">
+    <div class="modal-dialog modal-certificate">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-title">OFFICIAL APMC ONION QUALITY INSPECTION CERTIFICATE</span>
+          <span class="cert-no" id="modalCertId">CERT-ON-2026-9081</span>
+        </div>
+        <button class="btn-close-modal" id="btnCloseBatchModal">&times;</button>
+      </div>
+      
+      <div class="modal-body printable-certificate-area" id="certificatePrintArea">
+        <!-- Printable Certificate Content -->
+        <div class="cert-header">
+          <div class="cert-gov-seal">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><circle cx="12" cy="12" r="10" opacity="0.2"/><path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7z"/></svg>
+            <span>AGMARK / APMC COMPLIANT</span>
+          </div>
+          <div class="cert-meta-block">
+            <h2 class="cert-station-name" id="certStationName">Lasalgaon APMC Regional Procurement Center</h2>
+            <div class="cert-timestamp" id="certDate">Date: 2026-09-08 | Time: 12:20:00 IST</div>
+          </div>
+        </div>
+
+        <div class="cert-lot-details-grid">
+          <div><strong>Batch ID:</strong> <span id="certBatchId">BATCH-2026-0908</span></div>
+          <div><strong>Farmer / Supplier:</strong> <span id="certSupplier">Sahyadri Farmer Producer Co.</span></div>
+          <div><strong>Lot Weight:</strong> <span id="certWeight">3,500 kg</span></div>
+          <div><strong>Onion Variety:</strong> <span id="certVariety">Red Nasik</span></div>
+          <div><strong>Line Operator:</strong> <span id="certOperator">Inspector R. Patil (#409)</span></div>
+          <div><strong>Camera Rig:</strong> <span>Nadir Optical 3.20 px/mm</span></div>
+        </div>
+
+        <!-- Grade Yield Summary Table -->
+        <table class="cert-yield-table">
+          <thead>
+            <tr>
+              <th>Grade Tier</th>
+              <th>Diameter Caliper</th>
+              <th>Count</th>
+              <th>Yield Ratio (%)</th>
+              <th>Weight Equivalent</th>
+              <th>Indicative Price (₹/kg)</th>
+              <th>Lot Valuation</th>
+            </tr>
+          </thead>
+          <tbody id="certYieldBody">
+            <!-- Rendered dynamically -->
+          </tbody>
+          <tfoot>
+            <tr class="cert-total-row">
+              <td colspan="2"><strong>TOTAL LOT SUMMARY</strong></td>
+              <td id="certTotalCount"><strong>0</strong></td>
+              <td><strong>100%</strong></td>
+              <td id="certTotalWeight"><strong>3,500 kg</strong></td>
+              <td>--</td>
+              <td id="certTotalValuation"><strong>₹0.00</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Fungal Pathology & Safety Verification Box -->
+        <div class="cert-safety-box" id="certSafetyBox">
+          <div class="cs-icon">🛡️</div>
+          <div class="cs-text">
+            <strong>Food Safety &amp; Fungal Screening Cleared:</strong>
+            <span id="certSafetyText">No Aspergillus niger or Aspergillus flavus colony threshold exceedances detected. Lot is approved for commercial packaging.</span>
+          </div>
+        </div>
+
+        <!-- Digital Signatures & QR Code -->
+        <div class="cert-signatures-row">
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <span>Quality Inspection Officer</span>
+          </div>
+          <div class="qr-block">
+            <div class="qr-placeholder">
+              <svg viewBox="0 0 24 24" width="56" height="56" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="3" height="3"/>
+                <rect x="18" y="18" width="3" height="3"/>
+              </svg>
+            </div>
+            <small>Scan for SHA-256 Cloud Verify</small>
+          </div>
+          <div class="sig-block">
+            <div class="sig-line"></div>
+            <span>Procurement Desk Officer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btnExportCertJson">Download JSON</button>
+        <button class="btn btn-outline" id="btnExportCertCsv">Export CSV</button>
+        <button class="btn btn-primary" id="btnPrintCert">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2m-8 0v4h8v-4"/></svg>
+          <span>Print Official Certificate (A4)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL 2: CLOUD SYNC SIMULATION & QUEUE MODAL                -->
+  <!-- ============================================================ -->
+  <div class="modal-backdrop" id="modalSync" style="display: none;">
+    <div class="modal-dialog modal-small">
+      <div class="modal-header">
+        <span class="modal-title">Edge Cloud Synchronization</span>
+        <button class="btn-close-modal" id="btnCloseSyncModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="sync-progress-box">
+          <div class="sync-icon-spin" id="syncSpinIcon">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/>
+            </svg>
+          </div>
+          <h4 id="syncStatusHeading">Replicating Local SSD Batches to Central Cloud...</h4>
+          <p id="syncStatusDetail">Connecting to APMC AgriCloud sync endpoint...</p>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="syncProgressBar" style="width: 25%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnFinishSync" style="display:none;">Close &amp; Return</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/vision/image-processor.js"></script>
+  <script src="js/vision/size-caliper.js"></script>
+  <script src="js/vision/shape-analyzer.js"></script>
+  <script src="js/vision/color-classifier.js"></script>
+  <script src="js/vision/sprout-detector.js"></script>
+  <script src="js/vision/rot-detector.js"></script>
+  <script src="js/vision/aspergillus-detector.js"></script>
+  <script src="js/vision/surface-defects.js"></script>
+  <script src="js/vision/grading-engine.js"></script>
+  <script src="js/tracker/conveyor-tracker.js"></script>
+  <script src="js/storage/local-db.js"></script>
+  <script src="js/storage/sync-manager.js"></script>
+  <script src="js/samples/preset-data.js"></script>
+  <script src="js/ui/conveyor-simulator.js"></script>
+  <script src="js/ui/live-monitor.js"></script>
+  <script src="js/ui/batch-reports.js"></script>
+  <script src="js/ui/grading-reference.js"></script>
+  <script src="js/ui/analytics-view.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
